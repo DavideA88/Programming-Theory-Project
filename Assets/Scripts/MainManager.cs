@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -6,6 +7,8 @@ public class MainManager : MonoBehaviour
     public static MainManager Instance { get; private set; }
     public enum HeroClass { Warrior, Mage, Assassin }
     public HeroClass playerClass;
+    public bool playerTurn = true;
+    private Enemy enemy;
 
     void Awake()
     {
@@ -31,8 +34,19 @@ public class MainManager : MonoBehaviour
         
     }
 
-    public static void StartGame()
+    public void StartGame()
     {
         SceneManager.LoadScene(1);
+        
+        playerTurn = true;
+    }
+
+    public void EndTurn()
+    {
+        playerTurn = !playerTurn;
+
+        enemy = FindFirstObjectByType<Enemy>().GetComponent<Enemy>();
+
+        enemy.Invoke(nameof(enemy.CheckEnemyTurn), 1);
     }
 }

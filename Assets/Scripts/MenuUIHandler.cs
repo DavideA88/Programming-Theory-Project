@@ -1,12 +1,15 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using static MainManager;
 
 public class MenuUIHandler : MonoBehaviour
 {
+    private MainManager mainManager;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        mainManager = GameObject.Find("Main Manager").GetComponent<MainManager>();
     }
 
     // Update is called once per frame
@@ -32,6 +35,16 @@ public class MenuUIHandler : MonoBehaviour
             break;
         }
 
-        StartGame();
+        mainManager.StartGame();
+    }
+
+    public void AttackButton()
+    {
+        FindFirstObjectByType<Hero>().Attack();
+    }
+
+    public void MainMenu()
+    {
+        SceneManager.LoadScene(0);
     }
 }
