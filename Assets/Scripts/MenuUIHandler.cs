@@ -5,6 +5,7 @@ using static MainManager;
 public class MenuUIHandler : MonoBehaviour
 {
     private MainManager mainManager;
+    public GameObject gameOverScreen;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -41,6 +42,16 @@ public class MenuUIHandler : MonoBehaviour
     public void AttackButton()
     {
         FindFirstObjectByType<Hero>().Attack();
+    }
+
+    public void SkillButton()
+    {
+        Hero hero = FindFirstObjectByType<Hero>();
+
+        if (hero.SkillPoints == hero.max_SP)
+        {
+            hero.Skill();
+        }
     }
 
     public void MainMenu()

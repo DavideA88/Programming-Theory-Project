@@ -4,6 +4,7 @@ using static MainManager;
 public class SpawnManager : MonoBehaviour
 {
     public GameObject[] playerPrefabs;
+    public GameObject[] enemyPrefabs;
     public Transform heroSpawnPoint;
     public Transform enemySpawnPoint;
     private int index;
@@ -12,6 +13,7 @@ public class SpawnManager : MonoBehaviour
     void Start()
     {
         SpawnHero();
+        SpawnEnemy();
     }
 
     // Update is called once per frame
@@ -34,5 +36,10 @@ public class SpawnManager : MonoBehaviour
         }
 
         Instantiate(playerPrefabs[index], heroSpawnPoint);
+    }
+
+    public void SpawnEnemy()
+    {
+        Instantiate(enemyPrefabs[Random.Range(0, 8)], enemySpawnPoint);
     }
 }

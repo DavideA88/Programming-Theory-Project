@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -34,11 +35,16 @@ public abstract class Hero : MonoBehaviour
     }
     protected int m_SP = 0;
 
-    protected int max_SP { get; set; } = 100;
+    public int max_SP { get; protected set; } = 100;
 
     protected abstract int attack { get; set; }
 
+    protected bool isPlayerAlive;
+
     protected Animator heroAnim;
+    private TextMeshProUGUI heroClassText;
+    private TextMeshProUGUI HPtext;
+    private TextMeshProUGUI SPtext;
     private Slider healthBar;
     private Slider skillBar;
 
@@ -47,11 +53,23 @@ public abstract class Hero : MonoBehaviour
     {
         heroAnim = GetComponent<Animator>();
 
+        heroClassText = GameObject.Find("Hero Class").GetComponent<TextMeshProUGUI>();
+        HPtext = GameObject.Find("HP").GetComponent<TextMeshProUGUI>();
+        SPtext = GameObject.Find("SP").GetComponent<TextMeshProUGUI>();
         healthBar = GameObject.Find("Player Health Bar").GetComponent<Slider>();
         skillBar = GameObject.Find("Player Skill Bar").GetComponent<Slider>();
 
+        heroClassText.text = MainManager.Instance.playerClass.ToString();
+        HPtext.text = "HP : " + HealthPoints + " / " + HealthPoints;
+        SPtext.text = "SP : " + SkillPoints + " / " + max_SP;
+
         healthBar.maxValue = HealthPoints;
         healthBar.value = HealthPoints;
+
+        skillBar.maxValue = max_SP;
+        skillBar.value = SkillPoints;
+
+        isPlayerAlive = true;
     }
 
     // Update is called once per frame
@@ -63,6 +81,8 @@ public abstract class Hero : MonoBehaviour
     public virtual void Attack()
     {
         StartAttackAnimation();
+
+        MainManager.Instance.UpdateUI();
         
         // DealDamage();
 
@@ -81,31 +101,48 @@ public abstract class Hero : MonoBehaviour
         FindAnyObjectByType<Enemy>().ReceiveDamage(CalculateDamage(attack));
     }
 
-    private void UpdateHealthPoints(int damage)
+    protected void UpdateHealthPoints(int damage)
     {
         HealthPoints -= damage;
         healthBar.value = HealthPoints;
+        HPtext.text = "HP : " + healthBar.value.ToString() + " / " + healthBar.maxValue.ToString();
     }
 
     private void UpdateSkillPoints(int value)
     {
         SkillPoints += value;
         skillBar.value = SkillPoints;
+        SPtext.text = "SP : " + skillBar.value.ToString() + " / " + skillBar.maxValue.ToString();
     }
 
     public virtual void Skill()
     {
-        UpdateSkillPoints(-max_SP);
+        StartSkillAnimation();
 
-        EndHeroTurn();
+        MainManager.Instance.UpdateUI();
+
+        // UpdateSkillPoints(-max_SP);
+
+        // DealSkillDamage();
+
+        // EndHeroTurn();
     }
 
-    public void ReceiveDamage(int damage)
+    public virtual void StartSkillAnimation()
+    {
+        heroAnim.SetTrigger("Skill_trig");
+    }
+
+    protected virtual void DealSkillDamage()
+    {
+        FindAnyObjectByType<Enemy>().ReceiveDamage((int)Math.Round(CalculateDamage(attack) * 1.5f));
+    }
+
+    public virtual void ReceiveDamage(int damage)
     {
         heroAnim.SetTrigger("Hurt_trig");
         
         UpdateHealthPoints(damage);
-        UpdateSkillPoints(20);
 
         if (HealthPoints <= 0)
         {
@@ -116,19 +153,28 @@ public abstract class Hero : MonoBehaviour
 
     protected void Die()
     {
+        isPlayerAlive = false;
         heroAnim.SetBool("IsAlive", false);
         heroAnim.SetTrigger("Die_trig");
+
+        // EndHeroTurn();
     }
 
     protected int CalculateDamage(int baseAttack)
     {
-        int damage = (int)Math.Round(baseAttack * UnityEngine.Random.Range(0.75f, 1.25f));
+        int damage = (int)Math.Round(baseAttack * UnityEngine.Random.Range(0.85f, 1.15f));
 
         return damage;
     }
 
     private void EndHeroTurn()
     {
-        MainManager.Instance.EndTurn();
+        if (isPlayerAlive)
+        {
+            MainManager.Instance.EndTurn();
+        } else
+        {
+            MainManager.Instance.GameOver();
+        }
     }
 }

@@ -1,4 +1,6 @@
 using System;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -37,19 +39,31 @@ public class Enemy : MonoBehaviour
     protected int attack { get; set; } = 40;
 
     protected Animator enemyAnim;
+    private SpawnManager spawnManager;
+    private TextMeshProUGUI enemyNameText;
     private Slider healthBar;
     private Slider skillBar;
+    private bool isEnemyAlive;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         enemyAnim = GetComponent<Animator>();
+        spawnManager = GameObject.Find("Spawn Manager").GetComponent<SpawnManager>();
 
+        enemyNameText = GameObject.Find("Enemy Name").GetComponent<TextMeshProUGUI>();
         healthBar = GameObject.Find("Enemy Health Bar").GetComponent<Slider>();
         skillBar = GameObject.Find("Enemy Skill Bar").GetComponent<Slider>();
 
+        enemyNameText.text = gameObject.name.Replace("(Clone)", "");
+
         healthBar.maxValue = HealthPoints;
         healthBar.value = HealthPoints;
+
+        skillBar.maxValue = max_SP;
+        skillBar.value = SkillPoints;
+
+        isEnemyAlive = true;
     }
 
     // Update is called once per frame
@@ -60,7 +74,7 @@ public class Enemy : MonoBehaviour
 
     public void CheckEnemyTurn()
     {
-        if (!MainManager.Instance.playerTurn)
+        if (!MainManager.Instance.playerTurn && isEnemyAlive)
         {
             if (SkillPoints == max_SP)
             {
@@ -107,11 +121,23 @@ public class Enemy : MonoBehaviour
 
     private void Skill()
     {
+        StartSkillAnimation();
+
+        // UpdateSkillPoints(-max_SP);
+
+        // DealSkillDamage();
+
+        // EndEnemyTurn();
+    }
+
+    public virtual void StartSkillAnimation()
+    {
+        enemyAnim.SetTrigger("Skill_trig");
+    }
+
+    protected virtual void DealSkillDamage()
+    {
         FindAnyObjectByType<Hero>().ReceiveDamage(CalculateDamage(attack) * 2);
-
-        UpdateSkillPoints(-max_SP);
-
-        EndEnemyTurn();
     }
 
     public void ReceiveDamage(int damage)
@@ -119,7 +145,6 @@ public class Enemy : MonoBehaviour
         enemyAnim.SetTrigger("Hurt_trig");
 
         UpdateHealthPoints(damage);
-        UpdateSkillPoints(20);
 
         if (HealthPoints <= 0)
         {
@@ -130,19 +155,29 @@ public class Enemy : MonoBehaviour
 
     protected void Die()
     {
+        isEnemyAlive = false;
         enemyAnim.SetBool("IsAlive", false);
         enemyAnim.SetTrigger("Die_trig");
+
+        // EndEnemyTurn();
     }
 
     public int CalculateDamage(int baseAttack)
     {
-        int damage = (int)Math.Round(baseAttack * UnityEngine.Random.Range(0.75f, 1.25f));
+        int damage = (int)Math.Round(baseAttack * UnityEngine.Random.Range(0.85f, 1.15f));
 
         return damage;
     }
 
     private void EndEnemyTurn()
     {
+        MainManager.Instance.UpdateUI();
         MainManager.Instance.EndTurn();
+        
+        if (!isEnemyAlive)
+        {
+            Destroy(gameObject);
+            spawnManager.SpawnEnemy();
+        }
     }
 }

@@ -1,6 +1,10 @@
 using System.Collections;
+using System.Linq;
+using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MainManager : MonoBehaviour
 {
@@ -9,6 +13,7 @@ public class MainManager : MonoBehaviour
     public HeroClass playerClass;
     public bool playerTurn = true;
     private Enemy enemy;
+    private MenuUIHandler menuUI;
 
     void Awake()
     {
@@ -41,12 +46,42 @@ public class MainManager : MonoBehaviour
         playerTurn = true;
     }
 
+    public void GameOver()
+    {
+        menuUI = GameObject.Find("Canvas").GetComponent<MenuUIHandler>();
+        
+        menuUI.gameOverScreen.SetActive(true);
+
+        GameObject.Find("Background Music").GetComponent<AudioSource>().Stop();
+        GameObject.Find("Game Over Music").GetComponent<AudioSource>().Play();
+    }
+
     public void EndTurn()
     {
         playerTurn = !playerTurn;
 
         enemy = FindFirstObjectByType<Enemy>().GetComponent<Enemy>();
 
-        enemy.Invoke(nameof(enemy.CheckEnemyTurn), 1);
+        enemy.Invoke(nameof(enemy.CheckEnemyTurn), 1);        
+    }
+
+    public void UpdateUI()
+    {
+        GameObject[] buttons = GameObject.FindGameObjectsWithTag("ActionButton");
+
+        foreach (var item in buttons)
+        {
+            if (playerTurn)
+            {
+                item.GetComponent<Button>().interactable = false;
+
+                item.GetComponentInChildren<TextMeshProUGUI>().alpha = 0.5f;
+            } else
+            {
+                item.GetComponent<Button>().interactable = true;
+
+                item.GetComponentInChildren<TextMeshProUGUI>().alpha = 1;
+            }
+        }
     }
 }
