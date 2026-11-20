@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 using static MainManager;
 
@@ -6,6 +7,7 @@ public class MenuUIHandler : MonoBehaviour
 {
     private MainManager mainManager;
     public GameObject gameOverScreen;
+    public AudioMixer masterMixer;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -57,5 +59,20 @@ public class MenuUIHandler : MonoBehaviour
     public void MainMenu()
     {
         SceneManager.LoadScene(0);
+    }
+
+    public void SetGlobalVolume(float volumeLevel)
+    {
+        masterMixer.SetFloat("masterVolume", Mathf.Log(volumeLevel) * 10);
+    }
+
+    public void SetMusicVolume(float volumeLevel)
+    {
+        masterMixer.SetFloat("musicVolume", Mathf.Log(volumeLevel) * 10);
+    }
+
+    public void SetSoundsVolume(float volumeLevel)
+    {
+        masterMixer.SetFloat("soundsVolume", Mathf.Log(volumeLevel) * 10);
     }
 }
