@@ -1,3 +1,5 @@
+using TMPro;
+using UnityEditor.Rendering;
 using UnityEngine;
 using static MainManager;
 
@@ -7,6 +9,7 @@ public class SpawnManager : MonoBehaviour
     public GameObject[] enemyPrefabs;
     public Transform heroSpawnPoint;
     public Transform enemySpawnPoint;
+    public TextMeshProUGUI waveNumberText;
     private int index;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -14,6 +17,8 @@ public class SpawnManager : MonoBehaviour
     {
         SpawnHero();
         SpawnEnemy();
+
+        waveNumberText.text = "Wave " + Instance.waveNumber;
     }
 
     // Update is called once per frame
@@ -24,6 +29,7 @@ public class SpawnManager : MonoBehaviour
 
     public void SpawnHero()
     {
+        // Spawning hero prefab based on class chosen by the player
         if (Instance.playerClass == HeroClass.Warrior)
         {
             index = 0;
@@ -40,6 +46,10 @@ public class SpawnManager : MonoBehaviour
 
     public void SpawnEnemy()
     {
+        // Spawning a random enemy prefab
         Instantiate(enemyPrefabs[Random.Range(0, 8)], enemySpawnPoint);
+
+        Instance.waveNumber++;
+        waveNumberText.text = "Wave " + Instance.waveNumber;
     }
 }

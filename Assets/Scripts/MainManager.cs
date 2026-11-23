@@ -12,6 +12,7 @@ public class MainManager : MonoBehaviour
     public enum HeroClass { Warrior, Mage, Assassin }
     public HeroClass playerClass;
     public bool playerTurn = true;
+    public int waveNumber;
     private Enemy enemy;
     private MenuUIHandler menuUI;
 
@@ -44,20 +45,25 @@ public class MainManager : MonoBehaviour
         SceneManager.LoadScene(1);
         
         playerTurn = true;
+
+        waveNumber = 0;
     }
 
     public void GameOver()
     {
+        // Get the Game Over Screen GameObject from the script on the second scene
         menuUI = GameObject.Find("Canvas").GetComponent<MenuUIHandler>();
         
         menuUI.gameOverScreen.SetActive(true);
 
+        // Switch music when player dies
         GameObject.Find("Background Music").GetComponent<AudioSource>().Stop();
         GameObject.Find("Game Over Music").GetComponent<AudioSource>().Play();
     }
 
     public void EndTurn()
     {
+        // Switch turns after action and check if enemy has to attack
         playerTurn = !playerTurn;
 
         enemy = FindFirstObjectByType<Enemy>().GetComponent<Enemy>();
@@ -67,11 +73,12 @@ public class MainManager : MonoBehaviour
 
     public void UpdateUI()
     {
+        // Disable action buttons after player has attacked
         GameObject[] buttons = GameObject.FindGameObjectsWithTag("ActionButton");
 
         foreach (var item in buttons)
         {
-            if (playerTurn)
+            if (playerTurn || (item.name == "Skill Button" && FindFirstObjectByType<Hero>().GetComponent<Hero>().SkillPoints < 100))
             {
                 item.GetComponent<Button>().interactable = false;
 

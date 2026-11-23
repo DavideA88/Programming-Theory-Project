@@ -4,7 +4,7 @@ using System;
 
 public class Assassin : Hero
 {
-    protected override int m_HP { get; set; } = 250;
+    protected override int m_HP { get; set; } = 800;
     protected override int attack { get; set; } = 120;
 
     private bool isDodging = false;
@@ -14,17 +14,18 @@ public class Assassin : Hero
     {
         base.Skill();
 
-        // UpdateSkillPoints(-max_SP);
+        // UpdateSkillPoints(-max_SP) called in animation event
 
-        // DealSkillDamage();
+        // DealSkillDamage() called in animation event
 
-        // Dodge();
+        // Dodge() called in animation event
 
-        // EndHeroTurn();
+        // EndHeroTurn() called in animation event
     }
 
     private void Dodge()
     {
+        // Assassin enters dodging state, cancelling the next attack from enemy
         isDodging = true;
         heroAnim.SetBool("IsDodging", true);
 
@@ -38,12 +39,14 @@ public class Assassin : Hero
 
     public override void ReceiveDamage(int damage)
     {
+        // Check if assassin is in dodging state, and don't deal any damage
         if (isDodging && dodgeCounter > 0)
         {
             heroAnim.SetTrigger("Dodge_trig");
 
             dodgeCounter--;
 
+            // Disable dodging state after 1 turn
             if (dodgeCounter == 0)
             {
                 isDodging = false;

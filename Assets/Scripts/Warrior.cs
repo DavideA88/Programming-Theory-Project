@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Warrior : Hero
 {
-    protected override int m_HP { get; set; } = 400;
+    protected override int m_HP { get; set; } = 1200;
     protected override int attack { get; set; } = 80;
 
     private bool isBlocking = false;
@@ -12,17 +12,18 @@ public class Warrior : Hero
     {
         base.Skill();
 
-        // UpdateSkillPoints(-max_SP);
+        // UpdateSkillPoints(-max_SP) called in animation event
 
-        // DealSkillDamage();
+        // DealSkillDamage() called in animation event
 
-        // Block();
+        // Block() called in animation event
 
-        // EndHeroTurn();
+        // EndHeroTurn() called in animation event
     }
 
     private void Block()
     {
+        // Warrior enters blocking state, dividing damage by 2, for 2 turns
         isBlocking = true;
         heroAnim.SetBool("IsBlocking", true);
 
@@ -36,6 +37,7 @@ public class Warrior : Hero
 
     public override void ReceiveDamage(int damage)
     {
+        // Check if warrior is in blocking state, and divide damage by 2
         if (isBlocking && blockCounter > 0)
         {
             heroAnim.SetTrigger("Block_trig");
@@ -50,6 +52,7 @@ public class Warrior : Hero
             
             blockCounter--;
             
+            // Disable blocking state after 2 turns
             if (blockCounter == 0)
             {
                 isBlocking = false;

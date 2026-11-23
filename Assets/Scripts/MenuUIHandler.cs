@@ -23,6 +23,7 @@ public class MenuUIHandler : MonoBehaviour
 
     public void ChooseClass(string heroClass)
     {
+        // Defining hero's class based on player's choice
         switch (heroClass)
         {
             case "Warrior":
@@ -48,6 +49,7 @@ public class MenuUIHandler : MonoBehaviour
 
     public void SkillButton()
     {
+        // Allowing player to use skill only if SP is at max value
         Hero hero = FindFirstObjectByType<Hero>();
 
         if (hero.SkillPoints == hero.max_SP)
@@ -63,6 +65,7 @@ public class MenuUIHandler : MonoBehaviour
 
     public void SetGlobalVolume(float volumeLevel)
     {
+        // Change volume attenuation dynamically with sliders
         masterMixer.SetFloat("masterVolume", Mathf.Log(volumeLevel) * 10);
     }
 

@@ -18,7 +18,7 @@ public class Enemy : MonoBehaviour
             }
         }
     }
-    protected int m_HP { get; set; } = 400;
+    protected int m_HP { get; set; } = 1000;
 
     public int SkillPoints {
         get { return m_SP; }
@@ -36,7 +36,7 @@ public class Enemy : MonoBehaviour
 
     protected int max_SP { get; set; } = 100;
 
-    protected int attack { get; set; } = 40;
+    protected int attack { get; set; } = 50;
 
     protected Animator enemyAnim;
     private SpawnManager spawnManager;
@@ -44,6 +44,7 @@ public class Enemy : MonoBehaviour
     private Slider healthBar;
     private Slider skillBar;
     private bool isEnemyAlive;
+    private float waveMultiplier;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -51,11 +52,17 @@ public class Enemy : MonoBehaviour
         enemyAnim = GetComponent<Animator>();
         spawnManager = GameObject.Find("Spawn Manager").GetComponent<SpawnManager>();
 
+        // Initiating enemy stats
         enemyNameText = GameObject.Find("Enemy Name").GetComponent<TextMeshProUGUI>();
         healthBar = GameObject.Find("Enemy Health Bar").GetComponent<Slider>();
         skillBar = GameObject.Find("Enemy Skill Bar").GetComponent<Slider>();
 
         enemyNameText.text = gameObject.name.Replace("(Clone)", "");
+
+        waveMultiplier = 1 + 0.1f * (MainManager.Instance.waveNumber - 1);
+
+        HealthPoints = (int)Math.Round(HealthPoints * waveMultiplier);
+        attack = (int)Math.Round(attack * waveMultiplier);
 
         healthBar.maxValue = HealthPoints;
         healthBar.value = HealthPoints;
@@ -74,6 +81,7 @@ public class Enemy : MonoBehaviour
 
     public void CheckEnemyTurn()
     {
+        // Check at the end of every turn if enemy has to play and can use skill
         if (!MainManager.Instance.playerTurn && isEnemyAlive)
         {
             if (SkillPoints == max_SP)
@@ -90,11 +98,11 @@ public class Enemy : MonoBehaviour
     {
         StartAttackAnimation();
 
-        // DealDamage();
+        // DealDamage() called in animation event
 
-        // UpdateSkillPoints(20);
+        // UpdateSkillPoints(20) called in animation event
 
-        // EndEnemyTurn();
+        // EndEnemyTurn() called in animation event
     }
 
     private void StartAttackAnimation()
@@ -104,17 +112,20 @@ public class Enemy : MonoBehaviour
 
     private void DealDamage()
     {
+        // Dealing damage to hero based on attack and random modifier
         FindAnyObjectByType<Hero>().ReceiveDamage(CalculateDamage(attack));
     }
 
     private void UpdateHealthPoints(int damage)
     {
+        // Update HP and UI
         HealthPoints -= damage;
         healthBar.value = HealthPoints;
     }
 
     private void UpdateSkillPoints(int value)
     {
+        // Update SP and UI
         SkillPoints += value;
         skillBar.value = SkillPoints;
     }
@@ -123,11 +134,11 @@ public class Enemy : MonoBehaviour
     {
         StartSkillAnimation();
 
-        // UpdateSkillPoints(-max_SP);
+        // UpdateSkillPoints(-max_SP) called in animation event
 
-        // DealSkillDamage();
+        // DealSkillDamage() called in animation event
 
-        // EndEnemyTurn();
+        // EndEnemyTurn() called in animation event
     }
 
     public virtual void StartSkillAnimation()
@@ -159,11 +170,12 @@ public class Enemy : MonoBehaviour
         enemyAnim.SetBool("IsAlive", false);
         enemyAnim.SetTrigger("Die_trig");
 
-        // EndEnemyTurn();
+        // EndEnemyTurn() called in animation event
     }
 
     public int CalculateDamage(int baseAttack)
     {
+        // Adding a random modifier to attack damage
         int damage = (int)Math.Round(baseAttack * UnityEngine.Random.Range(0.85f, 1.15f));
 
         return damage;
@@ -171,9 +183,11 @@ public class Enemy : MonoBehaviour
 
     private void EndEnemyTurn()
     {
+        // At the end of the turn, enable action buttons for the player
         MainManager.Instance.UpdateUI();
         MainManager.Instance.EndTurn();
         
+        // Check if enemy is alive, otherwise spawn another enemy
         if (!isEnemyAlive)
         {
             Destroy(gameObject);

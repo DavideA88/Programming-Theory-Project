@@ -53,6 +53,7 @@ public abstract class Hero : MonoBehaviour
     {
         heroAnim = GetComponent<Animator>();
 
+        // Initiating hero stats based on class
         heroClassText = GameObject.Find("Hero Class").GetComponent<TextMeshProUGUI>();
         HPtext = GameObject.Find("HP").GetComponent<TextMeshProUGUI>();
         SPtext = GameObject.Find("SP").GetComponent<TextMeshProUGUI>();
@@ -82,13 +83,13 @@ public abstract class Hero : MonoBehaviour
     {
         StartAttackAnimation();
 
-        MainManager.Instance.UpdateUI();
+        MainManager.Instance.UpdateUI(); // Disable action buttons after attack
         
-        // DealDamage();
+        // DealDamage() called in animation event
 
-        // UpdateSkillPoints(20);
+        // UpdateSkillPoints(20) called in animation event
 
-        // EndHeroTurn();
+        // EndHeroTurn() called in animation event
     }
 
     private void StartAttackAnimation()
@@ -98,11 +99,13 @@ public abstract class Hero : MonoBehaviour
 
     private void DealDamage()
     {
+        // Dealing damage to enemy based on attack and random modifier
         FindAnyObjectByType<Enemy>().ReceiveDamage(CalculateDamage(attack));
     }
 
     protected void UpdateHealthPoints(int damage)
     {
+        // Update HP and UI
         HealthPoints -= damage;
         healthBar.value = HealthPoints;
         HPtext.text = "HP : " + healthBar.value.ToString() + " / " + healthBar.maxValue.ToString();
@@ -110,6 +113,7 @@ public abstract class Hero : MonoBehaviour
 
     private void UpdateSkillPoints(int value)
     {
+        // Update SP and UI
         SkillPoints += value;
         skillBar.value = SkillPoints;
         SPtext.text = "SP : " + skillBar.value.ToString() + " / " + skillBar.maxValue.ToString();
@@ -121,11 +125,11 @@ public abstract class Hero : MonoBehaviour
 
         MainManager.Instance.UpdateUI();
 
-        // UpdateSkillPoints(-max_SP);
+        // UpdateSkillPoints(-max_SP) called in animation event
 
-        // DealSkillDamage();
+        // DealSkillDamage() called in animation event
 
-        // EndHeroTurn();
+        // EndHeroTurn() called in animation event
     }
 
     public virtual void StartSkillAnimation()
@@ -157,11 +161,12 @@ public abstract class Hero : MonoBehaviour
         heroAnim.SetBool("IsAlive", false);
         heroAnim.SetTrigger("Die_trig");
 
-        // EndHeroTurn();
+        // EndHeroTurn() called in animation event
     }
 
     protected int CalculateDamage(int baseAttack)
     {
+        // Adding a random modifier to attack damage
         int damage = (int)Math.Round(baseAttack * UnityEngine.Random.Range(0.85f, 1.15f));
 
         return damage;
@@ -169,6 +174,7 @@ public abstract class Hero : MonoBehaviour
 
     private void EndHeroTurn()
     {
+        // At the end of the turn, check if player is alive, otherwise game is over
         if (isPlayerAlive)
         {
             MainManager.Instance.EndTurn();

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Mage : Hero
 {
-    protected override int m_HP { get; set; } = 250;
+    protected override int m_HP { get; set; } = 650;
     protected override int attack { get; set; } = 100;
 
     [SerializeField]
@@ -12,17 +12,18 @@ public class Mage : Hero
     {
         base.Skill();
 
-        // UpdateSkillPoints(-max_SP);
+        // UpdateSkillPoints(-max_SP) called in animation event
 
-        // DealSkillDamage();
+        // DealSkillDamage() called in animation event
 
-        // Heal();
+        // Heal() called in animation event
 
-        // EndHeroTurn();
+        // EndHeroTurn() called in animation event
     }
 
     private void Heal()
     {
+        // Restore 100 HP to the mage when using skill and play particules animation
         healParticules.Play();
 
         UpdateHealthPoints(-100);
