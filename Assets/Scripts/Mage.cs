@@ -26,7 +26,7 @@ public class Mage : Hero
         // Restore 100 HP to the mage when using skill and play particules animation
         healParticules.Play();
 
-        UpdateHealthPoints(-100);
+        UpdateHealthPoints(-200);
     }
 
     protected override void DealSkillDamage()
