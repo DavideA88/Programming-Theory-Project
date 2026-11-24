@@ -2,12 +2,14 @@ using UnityEngine;
 
 public class Warrior : Hero
 {
+    // INHERITANCE
     protected override int m_HP { get; set; } = 1200;
     protected override int attack { get; set; } = 80;
 
     private bool isBlocking = false;
     private int blockCounter;
 
+    // POLYMORPHISM
     public override void Skill()
     {
         base.Skill();
@@ -30,11 +32,13 @@ public class Warrior : Hero
         blockCounter = 2;
     }
 
+    // POLYMORPHISM
     protected override void DealSkillDamage()
     {
         FindAnyObjectByType<Enemy>().ReceiveDamage(CalculateDamage(attack) * 2);
     }
 
+    // POLYMORPHISM
     public override void ReceiveDamage(int damage)
     {
         // Check if warrior is in blocking state, and divide damage by 2

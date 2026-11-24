@@ -2,12 +2,14 @@ using UnityEngine;
 
 public class Mage : Hero
 {
+    // INHERITANCE
     protected override int m_HP { get; set; } = 650;
     protected override int attack { get; set; } = 100;
 
     [SerializeField]
     private ParticleSystem healParticules;
     
+    // POLYMORPHISM
     public override void Skill()
     {
         base.Skill();
@@ -29,6 +31,7 @@ public class Mage : Hero
         UpdateHealthPoints(-200);
     }
 
+    // POLYMORPHISM
     protected override void DealSkillDamage()
     {
         base.DealSkillDamage();

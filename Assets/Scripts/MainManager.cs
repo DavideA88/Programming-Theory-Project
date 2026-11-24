@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 public class MainManager : MonoBehaviour
 {
+    // ENCAPSULATION
     public static MainManager Instance { get; private set; }
     public enum HeroClass { Warrior, Mage, Assassin }
     public HeroClass playerClass;

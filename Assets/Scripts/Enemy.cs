@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
+    // ENCAPSULATION
     public int HealthPoints {
         get { return m_HP; }
         set {
@@ -20,6 +21,7 @@ public class Enemy : MonoBehaviour
     }
     protected int m_HP { get; set; } = 1000;
 
+    // ENCAPSULATION
     public int SkillPoints {
         get { return m_SP; }
         set {
@@ -34,8 +36,10 @@ public class Enemy : MonoBehaviour
     }
     protected int m_SP = 0;
 
+    // ENCAPSULATION
     protected int max_SP { get; set; } = 100;
 
+    // ENCAPSULATION
     protected int attack { get; set; } = 50;
 
     protected Animator enemyAnim;
@@ -105,11 +109,13 @@ public class Enemy : MonoBehaviour
         // EndEnemyTurn() called in animation event
     }
 
+    // ABSTRACTION
     private void StartAttackAnimation()
     {
         enemyAnim.SetTrigger("Attack_trig");
     }
 
+    // ABSTRACTION
     private void DealDamage()
     {
         // Dealing damage to hero based on attack and random modifier
@@ -141,11 +147,13 @@ public class Enemy : MonoBehaviour
         // EndEnemyTurn() called in animation event
     }
 
+    // ABSTRACTION
     public virtual void StartSkillAnimation()
     {
         enemyAnim.SetTrigger("Skill_trig");
     }
 
+    // ABSTRACTION
     protected virtual void DealSkillDamage()
     {
         FindAnyObjectByType<Hero>().ReceiveDamage(CalculateDamage(attack) * 2);

@@ -4,12 +4,14 @@ using System;
 
 public class Assassin : Hero
 {
+    // INHERITANCE
     protected override int m_HP { get; set; } = 800;
     protected override int attack { get; set; } = 120;
 
     private bool isDodging = false;
     private int dodgeCounter;
     
+    // POLYMORPHISM
     public override void Skill()
     {
         base.Skill();
@@ -32,11 +34,13 @@ public class Assassin : Hero
         dodgeCounter = 1;
     }
 
+    // POLYMORPHISM
     protected override void DealSkillDamage()
     {
         FindAnyObjectByType<Enemy>().ReceiveDamage(CalculateDamage(attack) * 3);
     }
 
+    // POLYMORPHISM
     public override void ReceiveDamage(int damage)
     {
         // Check if assassin is in dodging state, and don't deal any damage
